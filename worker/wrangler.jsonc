@@ -1,0 +1,8 @@
+{
+  // Сервер заказов «Майя». Cloudflare собирает его из папки worker/ при каждом обновлении на GitHub.
+  "name": "maya-orders",
+  "main": "worker.js",
+  "compatibility_date": "2026-11-25",
+  "kv_namespaces": [{ "binding": "ORDERS", "id": "2bd9ece80d3741e49b28d603d9fbe932" }],
+  "observability": { "enabled": true }
+}
