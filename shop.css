@@ -300,3 +300,6 @@ body[data-page="owner"] footer { display: none; }
 .contact-links { display: flex; flex-wrap: wrap; gap: 10px; }
 .contact-links .outline { min-height: 44px; border-radius: 22px; padding: 0 18px; font-size: 14px; }
 .contact-links a:hover { text-decoration: none; border-color: var(--accent); color: var(--accent); }
+.order-done { padding: 18px 0 8px; }
+.order-done strong { display: block; font-size: 20px; margin-bottom: 6px; }
+.order-done p { color: var(--muted); font-size: 14px; line-height: 1.5; margin: 0 0 14px; }

@@ -51,6 +51,8 @@ function loadProducts() {
 const shared = document.documentElement.dataset.shared === 'true';
 // Витрина (index.html) и кабинет владельца (owner.html) используют один скрипт.
 const ownerPage = document.body.dataset.page === 'owner';
+// Адрес бот-сервера заказов (Cloudflare Worker). Пусто — заказы идут через чат с продавцом.
+const ORDER_API = '';
 const previousCatalog = loadProducts();
 let products = previousCatalog;
 let revision = null;
@@ -440,8 +442,45 @@ $('#send')?.addEventListener('click', async () => {
     if (before !== orderText()) { $('#checkout-feedback').textContent = 'Каталог обновился. Проверьте состав и сумму заказа.'; return; }
   }
   if (!summary().count) return;
-  const url = 'https://t.me/MayyaSabi?text=' + encodeURIComponent(orderText());
   const app = window.Telegram?.WebApp;
+  // Внутри Telegram заказ уходит на сервер: владелец и поддержка получают его с кнопками
+  // «Оплата получена» и «Отменить». Без сервера или вне Telegram — открываем чат с продавцом.
+  if (ORDER_API && app?.initData) {
+    $('#send').disabled = true;
+    $('#checkout-feedback').textContent = 'Отправляем заказ…';
+    try {
+      if (app.isVersionAtLeast?.('6.9') && app.requestWriteAccess) {
+        await new Promise(resolve => { try { app.requestWriteAccess(() => resolve()); } catch { resolve(); } });
+      }
+      const {lines, pickup, cash} = summary();
+      const order = {
+        lines: lines.map(item => ({name: item.name, desc: item.desc, qty: cart.get(item.id), price: item.price})),
+        method: pickup ? 'pickup' : 'delivery', payment: cash ? 'cash' : 'transfer',
+        name: fieldValue('name'), contact: fieldValue('contact'),
+        street: pickup ? '' : fieldValue('street'), house: pickup ? '' : fieldValue('house'),
+        time: pickup ? '' : deliveryTimeText(), comment: fieldValue('details')
+      };
+      const response = await fetch(ORDER_API + '/order', {method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({initData: app.initData, order}), signal: AbortSignal.timeout(15000)});
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.ok) throw Error('order');
+      cart.clear();
+      save('ikra-cart', {});
+      renderCart();
+      renderCatalog();
+      $('#cartItems').innerHTML = `<div class="order-done"><strong>Заказ №${escapeText(result.id)} принят!</strong>
+        <p>Мы прислали подтверждение в чат с ботом. ${cash ? 'Оплата наличными при получении.' : 'Реквизиты для перевода пришлёт владелец.'}</p>
+        <button class="outline" data-close>К каталогу</button></div>`;
+      $('#checkout-feedback').textContent = '';
+      app.HapticFeedback?.notificationOccurred?.('success');
+      return;
+    } catch {
+      $('#checkout-feedback').textContent = 'Не удалось отправить заказ напрямую — открываем чат с продавцом.';
+    } finally {
+      $('#send').disabled = false;
+    }
+  }
+  const url = 'https://t.me/MayyaSabi?text=' + encodeURIComponent(orderText());
   if (app?.initData && app.isVersionAtLeast?.('6.1')) app.openTelegramLink(url);
   else window.location.assign(url);
 });
