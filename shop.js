@@ -52,7 +52,7 @@ const shared = document.documentElement.dataset.shared === 'true';
 // Витрина (index.html) и кабинет владельца (owner.html) используют один скрипт.
 const ownerPage = document.body.dataset.page === 'owner';
 // Адрес бот-сервера заказов (Cloudflare Worker). Пусто — заказы идут через чат с продавцом.
-const ORDER_API = '';
+const ORDER_API = 'https://maya-orders.djamirsab.workers.dev';
 const previousCatalog = loadProducts();
 let products = previousCatalog;
 let revision = null;
