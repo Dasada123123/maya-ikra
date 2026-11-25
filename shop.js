@@ -787,6 +787,19 @@ async function startOwner() {
     $('#inventory').showModal();
   }
 }
+// Владелец и поддержка открывают кабинет прямо из Telegram:
+// ссылка t.me/Ikra_mayya_bot?startapp=owner или кнопка «Кабинет владельца» внизу витрины.
+const staffUsernames = ['dasad_a', 'mayyasabi'];
+function checkStaff() {
+  const app = window.Telegram?.WebApp;
+  const data = app?.initDataUnsafe;
+  if (!data || ownerPage) return;
+  if (data.start_param === 'owner') { location.replace(shared ? '/owner' : 'owner.html'); return; }
+  const username = data.user?.username?.toLowerCase();
+  const link = $('#staff-link');
+  if (link && username && staffUsernames.includes(username)) link.hidden = false;
+}
+window.addEventListener('load', checkStaff);
 async function start() {
   if (ownerPage) return startOwner();
   // Старые ссылки вида /#owner ведут в отдельный кабинет.
