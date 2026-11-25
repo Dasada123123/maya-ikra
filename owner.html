@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#faf8f3">
+  <title>Майя · Кабинет владельца</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/svg+xml" href="assets/mayya.svg">
+  <link rel="stylesheet" href="shop.css">
+  <script async src="https://telegram.org/js/telegram-web-app.js" onload="window.Telegram?.WebApp?.ready(); window.Telegram?.WebApp?.expand()"></script>
+  <script defer src="shop.js"></script>
+</head>
+<body data-page="owner">
+<svg class="symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+  <symbol id="bag" viewBox="0 0 24 24"><path d="M5 8h14l1 13H4L5 8Z M8.5 8V6a3.5 3.5 0 0 1 7 0v2"/></symbol>
+  <symbol id="arrow" viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6"/></symbol>
+  <symbol id="cross" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+  <symbol id="camera" viewBox="0 0 24 24"><path d="M3 7h4l2-3h6l2 3h4v13H3z"/><circle cx="12" cy="13" r="3.5"/></symbol>
+  <symbol id="truck" viewBox="0 0 24 24"><path d="M2 5h12v12H9m-4 0H2V5m12 4h4l4 5v3h-2m-4 0h-2"/><circle cx="7" cy="17" r="2"/><circle cx="18" cy="17" r="2"/></symbol>
+  <symbol id="pin" viewBox="0 0 24 24"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+</defs></svg>
+<div class="shell">
+<header>
+  <a class="logo" href="./" aria-label="Майя — витрина"><img src="assets/mayya.svg" alt="Майя" width="92" height="44"></a>
+  <nav aria-label="Навигация"><a href="./">Открыть витрину ↗</a></nav>
+</header>
+<main class="owner-main">
+  <section class="owner-card" aria-labelledby="owner-title">
+    <p class="kicker"><i></i>Только для владельца</p>
+    <h1 id="owner-title">Кабинет владельца</h1>
+    <p id="owner-status" class="shipping-note" role="status">Проверяем вход…</p>
+    <div class="owner-actions">
+      <a id="owner-login" class="primary" href="/signin-with-chatgpt?return_to=%2Fowner" target="_top" hidden>Войти с аккаунтом владельца</a>
+      <button class="primary" data-open="inventory" hidden>Управление каталогом</button>
+      <a class="outline" href="./">Посмотреть витрину покупателя</a>
+    </div>
+    <div id="catalog-error" hidden role="status"><p class="empty">Не удалось загрузить каталог.</p><button class="outline" id="retry">Повторить</button></div>
+  </section>
+</main>
+</div>
+<div id="status" class="sr-only" role="status"></div>
+
+<dialog id="inventory" aria-labelledby="inventory-title">
+  <div class="sheethead"><h2 id="inventory-title">Управление каталогом</h2><button class="close" data-close aria-label="Закрыть"><svg><use href="#cross"/></svg></button></div>
+  <p id="stock-help" class="caption">Учёт на этом устройстве. Для сверки укажите количество банок нужной фасовки.</p>
+  <button id="import-items" class="outline" hidden>Перенести каталог с этого устройства</button>
+  <button id="new-item" class="outline">Добавить позицию</button>
+  <div id="inventoryList"></div>
+  <form id="editForm" hidden>
+    <h3 id="formTitle" tabindex="-1">Новая позиция</h3>
+    <fieldset class="photo-editor">
+      <legend>Фотографии фасовки</legend>
+      <p class="caption">Первое фото видно на карточке. Можно добавить до 6 снимков.</p>
+      <button type="button" class="photo-upload" id="add-photos"><svg aria-hidden="true"><use href="#camera"/></svg>Добавить фото</button>
+      <ul id="photo-list" class="photo-list"></ul>
+      <input type="file" id="photo-files" accept="image/*" multiple hidden>
+      <p id="photo-feedback" class="caption" role="status"></p>
+    </fieldset>
+    <label class="field">Название<input id="productName" maxlength="80" required></label>
+    <label class="field">Фасовка<input id="productDesc" maxlength="100" placeholder="150 г" required></label>
+    <label class="field">Цена за банку, ₽<input id="productPrice" type="number" min="0" max="10000000" step="1" required></label>
+    <label class="field">Остаток, шт.<input id="productStock" type="number" min="0" max="100000" step="1" placeholder="Не указан"></label>
+    <div class="actions"><button type="submit" class="primary">Сохранить</button><button type="button" id="cancel-edit" class="outline">Отмена</button></div>
+  </form>
+  <p id="inventory-feedback" role="status"></p>
+</dialog>
+</body></html>

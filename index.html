@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#faf8f3">
+  <meta name="description" content="Красная икра Майя. Выберите нерку, кету или горбушу и оформите заказ в Telegram.">
+  <title>Майя · Красная икра</title>
+  <link rel="icon" type="image/svg+xml" href="assets/mayya.svg">
+  <link rel="stylesheet" href="shop.css">
+  <script async src="https://telegram.org/js/telegram-web-app.js" onload="window.Telegram?.WebApp?.ready(); window.Telegram?.WebApp?.expand()"></script>
+  <script defer src="shop.js"></script>
+</head>
+<body data-page="shop">
+<svg class="symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+  <symbol id="bag" viewBox="0 0 24 24"><path d="M5 8h14l1 13H4L5 8Z M8.5 8V6a3.5 3.5 0 0 1 7 0v2"/></symbol>
+  <symbol id="arrow" viewBox="0 0 24 24"><path d="M4 12h15m-6-6 6 6-6 6"/></symbol>
+  <symbol id="cross" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+  <symbol id="camera" viewBox="0 0 24 24"><path d="M3 7h4l2-3h6l2 3h4v13H3z"/><circle cx="12" cy="13" r="3.5"/></symbol>
+  <symbol id="truck" viewBox="0 0 24 24"><path d="M2 5h12v12H9m-4 0H2V5m12 4h4l4 5v3h-2m-4 0h-2"/><circle cx="7" cy="17" r="2"/><circle cx="18" cy="17" r="2"/></symbol>
+  <symbol id="pin" viewBox="0 0 24 24"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+</defs></svg>
+<div class="shell">
+<header>
+  <a class="logo" href="#" aria-label="Майя — главная"><img src="assets/mayya.svg" alt="Майя" width="92" height="44"></a>
+  <nav aria-label="Навигация"><a href="#catalog">Каталог</a><a href="#delivery-info">Доставка</a><a href="https://t.me/MayyaSabi">Владельцу</a><a href="https://t.me/Dasad_a">Поддержка</a></nav>
+  <button id="bag-button" class="bag-button" data-open="basket" aria-label="Открыть корзину"><svg><use href="#bag"/></svg><span>Корзина</span><b id="badge">0</b></button>
+</header>
+<main>
+  <section class="hero">
+    <img class="hero-photo" src="assets/mayya-table.jpg" width="960" height="1280" alt="Ложка красной икры над открытой банкой" fetchpriority="high">
+    <div class="hero-copy"><p class="kicker"><i></i>Лососевая зернистая</p><h1>Красная<br><em>икра</em></h1>
+      <a class="catalog-link" href="#catalog">Выбрать икру <svg><use href="#arrow"/></svg></a>
+    </div>
+  </section>
+  <section id="catalog" aria-labelledby="catalog-title">
+    <div class="section-heading"><h2 id="catalog-title">Каталог икры</h2><span>Цены с 10.11.2026</span></div>
+    <div id="products" class="grid"></div><div id="catalog-error" hidden role="status"><p class="empty">Не удалось загрузить каталог.</p><button class="outline" id="retry">Повторить</button></div>
+    <p class="caption">Упаковка на изображениях показана для примера. Наличие подтвердит продавец.</p>
+  </section>
+  <section id="delivery-info" aria-labelledby="delivery-title">
+    <h2 id="delivery-title">Получение заказа</h2>
+    <div class="delivery-options">
+      <div><svg><use href="#truck"/></svg><div><h3>Доставка</h3><p>От 5 банок бесплатно. Для 1–4 банок — 250 ₽.</p></div></div>
+      <div><svg><use href="#pin"/></svg><div><h3>Самовывоз</h3><p>Бесплатно. Место и время согласуем в Telegram.</p></div></div>
+      <div><svg><use href="#bag"/></svg><div><h3>Оплата</h3><p>Переводом на номер продавца или наличными при получении.</p></div></div>
+    </div>
+  </section>
+</main>
+<footer><div class="contact-links"><a class="outline" href="https://t.me/MayyaSabi">Написать владельцу ↗</a><a class="outline" href="https://t.me/Dasad_a">Поддержка ↗</a></div></footer>
+</div>
+<div class="dock" hidden><button data-open="basket"><svg><use href="#bag"/></svg><span>В корзину</span><b id="dock-count"></b><strong id="dock-total"></strong><svg><use href="#arrow"/></svg></button></div>
+<div id="status" class="sr-only" role="status"></div>
+
+<dialog id="basket" aria-labelledby="basket-title">
+  <div class="sheethead"><h2 id="basket-title">Ваш заказ</h2><button class="close" data-close aria-label="Закрыть"><svg><use href="#cross"/></svg></button></div>
+  <div id="cartItems"></div>
+  <div id="checkout" hidden>
+    <fieldset><legend>Способ получения</legend><div class="methods"><label><input type="radio" name="method" value="delivery" checked> Доставка</label><label><input type="radio" name="method" value="pickup"> Самовывоз</label></div></fieldset>
+    <p class="shipping-note" id="shipping-note"></p>
+    <fieldset><legend>Оплата</legend><div class="methods"><label><input type="radio" name="payment" value="transfer" checked> Переводом</label><label><input type="radio" name="payment" value="cash"> Наличными</label></div></fieldset>
+    <p class="shipping-note" id="payment-note"></p>
+    <div class="sums"><div><span>Товары</span><span id="subtotal"></span></div><div><span id="method-label"></span><span id="fee"></span></div><div class="total"><strong>Итого</strong><strong id="total"></strong></div></div>
+    <fieldset class="contact-form">
+      <legend>Контакты</legend>
+      <label class="field"><span id="name-label">Имя отправителя перевода</span> <b class="req">*</b>
+        <input id="name" maxlength="80" autocomplete="name" placeholder="Анна С." aria-describedby="name-hint name-error">
+        <small class="field-hint" id="name-hint">Как оно видно в банке при переводе на номер продавца: имя и первая буква фамилии. По нему продавец найдёт вашу оплату.</small>
+        <small class="field-error" id="name-error"></small>
+      </label>
+      <label class="field">Телефон или Telegram <b class="req" id="contact-req">*</b>
+        <input id="contact" maxlength="100" autocomplete="tel" placeholder="+7 900 123-45-67 или @username" aria-describedby="contact-error">
+        <small class="field-error" id="contact-error"></small>
+      </label>
+      <div id="address-block">
+        <div class="field">Город
+          <div class="city-lock"><svg aria-hidden="true"><use href="#pin"/></svg><b>Казань</b><span>доставляем только по Казани</span></div>
+        </div>
+        <div class="field-row">
+          <label class="field grow">Улица <b class="req">*</b>
+            <input id="street" maxlength="120" autocomplete="address-line1" placeholder="ул. Баумана" aria-describedby="address-error">
+          </label>
+          <label class="field short">Дом <b class="req">*</b>
+            <input id="house" maxlength="20" placeholder="12к1" aria-describedby="address-error">
+          </label>
+        </div>
+        <small class="field-error" id="address-error"></small>
+        <div class="field-row">
+          <label class="field">День <b class="req">*</b>
+            <select id="delivery-day" aria-describedby="time-error"></select>
+          </label>
+          <label class="field">Время <b class="req">*</b>
+            <select id="delivery-time" aria-describedby="time-error"></select>
+          </label>
+        </div>
+        <small class="field-hint">Выберите, когда будете дома. Курьер приедет примерно к этому времени, шаг — 15 минут.</small>
+        <small class="field-error" id="time-error"></small>
+        <p class="meet-note">Курьер не поднимается в квартиру. Он напишет или позвонит, когда подъедет, и вы выйдете за заказом к дому.</p>
+      </div>
+    </fieldset>
+    <details><summary>Пожелания</summary>
+      <label class="field">Комментарий<textarea id="details" rows="2" maxlength="500" placeholder="Например, удобное время доставки"></textarea></label>
+    </details>
+    <button class="primary send" id="send">Продолжить в Telegram <svg><use href="#arrow"/></svg></button>
+    <p id="checkout-feedback" class="shipping-note" role="status"></p>
+    <p class="caption">Откроется чат с продавцом. Проверьте и отправьте сообщение.</p>
+  </div>
+</dialog>
+</body></html>
